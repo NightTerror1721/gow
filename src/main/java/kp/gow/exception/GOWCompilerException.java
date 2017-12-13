@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kp.gow.parser;
+package kp.gow.exception;
 
 /**
  *
  * @author Asus
  */
-public enum CodeType
+public class GOWCompilerException
 {
-    IDENTIFIER,
-    OPERATOR_SYMBOL;
+    
 }

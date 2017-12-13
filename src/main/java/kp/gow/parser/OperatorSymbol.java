@@ -9,8 +9,10 @@ package kp.gow.parser;
  *
  * @author Asus
  */
-public enum CodeType
+public final class OperatorSymbol implements UnparsedCode
 {
-    IDENTIFIER,
-    OPERATOR_SYMBOL;
+    
+    @Override
+    public final CodeType getCodeType() { return CodeType.OPERATOR_SYMBOL; }
+    
 }

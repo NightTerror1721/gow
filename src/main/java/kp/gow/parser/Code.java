@@ -32,4 +32,7 @@ public interface Code
                 return true;
         return false;
     }
+    
+    @Override
+    String toString();
 }
