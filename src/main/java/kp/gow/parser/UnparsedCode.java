@@ -11,5 +11,5 @@ package kp.gow.parser;
  */
 public interface UnparsedCode extends Code
 {
-    
+    default boolean isOperand() { return false; }
 }

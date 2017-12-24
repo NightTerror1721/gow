@@ -7,15 +7,10 @@ package kp.gow.parser;
 
 /**
  *
- * @author Asus
+ * @author mpasc
  */
-public enum CodeType
+public abstract class Operand implements UnparsedCode
 {
-    IDENTIFIER,
-    OPERATOR_SYMBOL,
-    OPERATOR,
-    SCOPE,
-    PARENTHESIS,
-    SQUARE,
-    ARGUMENTS_LIST;
+    @Override
+    public final boolean isOperand() { return true; }
 }

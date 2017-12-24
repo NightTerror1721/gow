@@ -5,6 +5,8 @@
  */
 package kp.gow.parser;
 
+import java.util.HashMap;
+
 /**
  *
  * @author Asus
@@ -126,6 +128,29 @@ public abstract class OperatorSymbol implements UnparsedCode
             ASSIGNATION_LOGIC_AND = new AssignationSymbol("&=", LOGIC_AND),
             ASSIGNATION_LOGIC_OR = new AssignationSymbol("|=", LOGIC_OR),
             ASSIGNATION_LOGIC_XOR = new AssignationSymbol("^=", LOGIC_XOR);
+    
+    private static final HashMap<String, OperatorSymbol[]> HASH = Utils.catchFields(OperatorSymbol.class, new HashMap<>(), (map, field) -> {
+        OperatorSymbol cp = (OperatorSymbol) field.get(null);
+        OperatorSymbol[] array = map.get(cp.symbol);
+        if(array == null)
+        {
+            array = new OperatorSymbol[2];
+            map.put(cp.symbol,array);
+        }
+        array[cp.isUnary() || cp.isNew() ? 1 : 0] = cp;
+    });
+    
+    public static final boolean isOperator(String str) { return HASH.containsKey(str); }
+    public static final boolean isOperator(char c) { return isOperator(Character.toString(c)); }
+    
+    public static final OperatorSymbol getOperator(String str, boolean isUnary)
+    {
+        OperatorSymbol[] array = HASH.get(str);
+        return array == null ? null : array[isUnary ? 1 : 0];
+    }
+    
+    public static final boolean isOperator(String str, boolean isUnary) { return getOperator(str, isUnary) != null; }
+    public static final boolean isOperator(char c, boolean isUnary) { return getOperator(Character.toString(c), isUnary) != null; }
     
     
     

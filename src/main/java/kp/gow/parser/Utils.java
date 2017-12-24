@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 final class Utils
 {
-    public static final <E, C extends Code> Map<String, E> catchFields(Class<C> clazz, Map<String, E> hash, CatcherAction<E> action)
+    public static final <E, C extends Code, M extends Map<String, E>> M catchFields(Class<C> clazz, M hash, CatcherAction<E, M> action)
     {
         for(Field field : clazz.getDeclaredFields())
         {
@@ -30,7 +30,7 @@ final class Utils
         }
         return hash;
     }
-    public static final <E extends Code> Map<String, E> catchFields(Class<E> clazz, Map<String, E> hash, Function<E, String> nameGetter)
+    public static final <E extends Code, M extends Map<String, E>> M catchFields(Class<E> clazz, M hash, Function<E, String> nameGetter)
     {
         return catchFields(clazz, hash, (map, field) -> {
             E element = (E) field.get(null);
@@ -39,5 +39,5 @@ final class Utils
     }
     
     @FunctionalInterface
-    interface CatcherAction<E> { void action(Map<String, E> map, Field field) throws IllegalAccessException, IllegalArgumentException; }
+    interface CatcherAction<E, M extends Map<String, E>> { void action(M map, Field field) throws IllegalAccessException, IllegalArgumentException; }
 }
