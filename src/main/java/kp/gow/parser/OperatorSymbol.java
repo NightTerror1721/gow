@@ -15,14 +15,14 @@ public abstract class OperatorSymbol implements UnparsedCode
 {
     private final String symbol;
     private final Type type;
-    private final Order order;
+    private final boolean rightOrder;
     private final int priority;
     private final String functionName;
     
-    private OperatorSymbol(String symbol, Order order, Type type, int priority, String functionName)
+    private OperatorSymbol(String symbol, boolean rightOrder, Type type, int priority, String functionName)
     {
         this.symbol = symbol;
-        this.order = order;
+        this.rightOrder = rightOrder;
         this.type = type;
         this.priority = priority;
         this.functionName = functionName;
@@ -41,8 +41,8 @@ public abstract class OperatorSymbol implements UnparsedCode
         return cmp != 0 ? 0 : Integer.compare(priority, operatorSymbol.priority);
     }
     
-    public final boolean isLeftOrder() { return order == Order.LEFT || order == Order.BOTH; }
-    public final boolean isRightOrder() { return order == Order.RIGHT || order == Order.BOTH; }
+    public final boolean isLeftOrder() { return !rightOrder; }
+    public final boolean isRightOrder() { return rightOrder; }
     
     public OperatorSymbol getLinkedOperator() { return null; }
     
@@ -65,17 +65,20 @@ public abstract class OperatorSymbol implements UnparsedCode
     
     
     public static final OperatorSymbol
-            PROPERTY_ACCESS = new BinaryOperatorSymbol(".", 14, null),
-            ACCESS = new BinaryOperatorSymbol("[]", 14, null),
-            NEW = new NewOperatorSymbol("new", 14, null),
-            INVOKE = new InvokeOperatorSymbol(".()", 14, null),
-            CALL = new CallOperatorSymbol("()", 14, null),
+            PROPERTY_ACCESS = new BinaryOperatorSymbol(".", 15, null),
+            ACCESS = new BinaryOperatorSymbol("[]", 15, null),
+            NEW = new NewOperatorSymbol("new", 15, null),
+            INVOKE = new InvokeOperatorSymbol(".()", 15, null),
+            CALL = new CallOperatorSymbol("()", 15, null),
+            
+            SUFIX_INCREMENT = new UnaryOperatorSymbol("S++", 13, true, "increase"),
+            SUFIX_DECREMENT = new UnaryOperatorSymbol("S--", 13, true, "decrease"),
             
             NEGATE = new UnaryOperatorSymbol("!", 13, "negate"),
             LOGIC_NOT = new UnaryOperatorSymbol("~", 13, "logicNot"),
             NEGATIVE = new UnaryOperatorSymbol("-", 13, "negative"),
-            INCREMENT = new UnaryOperatorSymbol("++", 13, true, "increase"),
-            DECREMENT = new UnaryOperatorSymbol("--", 13, true, "decrease"),
+            PREFIX_INCREMENT = new UnaryOperatorSymbol("++P", 13, false, "increase"),
+            PREFIX_DECREMENT = new UnaryOperatorSymbol("--P", 13, false, "decrease"),
             //TYPEOF = new UnaryOperatorSymbol("typeof", 13, null),
             //IMPORT = new UnaryOperatorSymbol("import", 13, null),
             
@@ -157,7 +160,6 @@ public abstract class OperatorSymbol implements UnparsedCode
     
     
     
-    private enum Order { LEFT, RIGHT, BOTH; }
     private enum Type {
         UNARY(2),
         BINARY(2),
@@ -175,9 +177,9 @@ public abstract class OperatorSymbol implements UnparsedCode
     
     private static final class UnaryOperatorSymbol extends OperatorSymbol
     {
-        public UnaryOperatorSymbol(String symbol, int priority, boolean canBeBothOrder, String functionName)
+        public UnaryOperatorSymbol(String symbol, int priority, boolean rightOrder, String functionName)
         {
-            super(symbol, canBeBothOrder ? Order.BOTH : Order.LEFT, Type.UNARY, priority, functionName);
+            super(symbol, rightOrder, Type.UNARY, priority, functionName);
         }
         public UnaryOperatorSymbol(String symbol, int priority, String functionName) { this(symbol, priority, false, functionName); }
     }
@@ -186,7 +188,7 @@ public abstract class OperatorSymbol implements UnparsedCode
     {
         public BinaryOperatorSymbol(String symbol, int priority, String functionName)
         {
-            super(symbol, Order.LEFT, Type.BINARY, priority, functionName);
+            super(symbol, false, Type.BINARY, priority, functionName);
         }
     }
     
@@ -194,7 +196,7 @@ public abstract class OperatorSymbol implements UnparsedCode
     {
         public TernaryOperatorSymbol(String symbol, int priority, String functionName)
         {
-            super(symbol, Order.LEFT, Type.TERNARY, priority, functionName);
+            super(symbol, false, Type.TERNARY, priority, functionName);
         }
     }
     
@@ -202,7 +204,7 @@ public abstract class OperatorSymbol implements UnparsedCode
     {
         public InvokeOperatorSymbol(String symbol, int priority, String functionName)
         {
-            super(symbol, Order.LEFT, Type.INVOKE, priority, functionName);
+            super(symbol, false, Type.INVOKE, priority, functionName);
         }
     }
     
@@ -210,7 +212,7 @@ public abstract class OperatorSymbol implements UnparsedCode
     {
         public CallOperatorSymbol(String symbol, int priority, String functionName)
         {
-            super(symbol, Order.LEFT, Type.CALL, priority, functionName);
+            super(symbol, false, Type.CALL, priority, functionName);
         }
     }
     
@@ -218,7 +220,7 @@ public abstract class OperatorSymbol implements UnparsedCode
     {
         public NewOperatorSymbol(String symbol, int priority, String functionName)
         {
-            super(symbol, Order.LEFT, Type.NEW, priority, functionName);
+            super(symbol, false, Type.NEW, priority, functionName);
         }
     }
     
@@ -228,7 +230,7 @@ public abstract class OperatorSymbol implements UnparsedCode
         
         public AssignationSymbol(String symbol, OperatorSymbol linkedOperator)
         {
-            super(symbol, Order.RIGHT, Type.ASSIGNATION, 0, null);
+            super(symbol, true, Type.ASSIGNATION, 0, null);
             this.linkedOperator = linkedOperator;
         }
         

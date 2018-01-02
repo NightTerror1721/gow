@@ -3,20 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kp.gow.parser;
+package kp.gow.parser.literals;
 
 /**
  *
  * @author Asus
  */
-public enum CodeType
+public final class ArrayLiteral extends Mutable
 {
-    IDENTIFIER,
-    SEPARATOR,
-    LITERAL,
-    OPERATOR_SYMBOL,
-    OPERATOR,
-    SCOPE,
-    PARENTHESIS,
-    ARGUMENT_LIST;
+    
+    
+    @Override
+    public final LiteralType getLiteralType() { return LiteralType.ARRAY; }
+    
 }

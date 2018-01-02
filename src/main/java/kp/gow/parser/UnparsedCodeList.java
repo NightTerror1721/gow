@@ -13,25 +13,25 @@ import java.util.LinkedList;
  *
  * @author Asus
  */
-public final class CodeList
+public final class UnparsedCodeList
 {
     private final UnparsedCode[] code;
     
-    public CodeList(UnparsedCode... code) { this.code = check(code); }
-    public CodeList(Collection<? extends UnparsedCode> c) { this(c.toArray(new UnparsedCode[c.size()])); }
-    public CodeList(UnparsedCode[] code, int off, int len)
+    public UnparsedCodeList(UnparsedCode... code) { this.code = check(code); }
+    public UnparsedCodeList(Collection<? extends UnparsedCode> c) { this(c.toArray(new UnparsedCode[c.size()])); }
+    public UnparsedCodeList(UnparsedCode[] code, int off, int len)
     {
         this.code = new UnparsedCode[len];
         System.arraycopy(check(code), off, this.code, 0, len);
     }
-    private CodeList(UnparsedCode[] code, boolean dummy) { this.code = code; }
-    private CodeList(UnparsedCode[] code, int off, int len, boolean dummy)
+    private UnparsedCodeList(UnparsedCode[] code, boolean dummy) { this.code = code; }
+    private UnparsedCodeList(UnparsedCode[] code, int off, int len, boolean dummy)
     {
         this.code = new UnparsedCode[len];
         System.arraycopy(code, off, this.code, 0, len);
     }
     
-    public final CodeList copy() { return subList(0, code.length); }
+    public final UnparsedCodeList copy() { return subList(0, code.length); }
     
     public final int length() { return code.length; }
     public final boolean isEmpty() { return code.length == 0; }
@@ -45,50 +45,50 @@ public final class CodeList
     
     public final <UC extends UnparsedCode> UC get(int index) { return (UC) code[index]; }
     
-    public final CodeList subList(int offset, int length) { return new CodeList(code, offset, length, false); }
-    public final CodeList subList(int offset) { return subList(offset, code.length - offset); }
+    public final UnparsedCodeList subList(int offset, int length) { return new UnparsedCodeList(code, offset, length, false); }
+    public final UnparsedCodeList subList(int offset) { return subList(offset, code.length - offset); }
     
-    public final CodeList concat(CodeList clist) { return concat(clist.code); }
-    public final CodeList concat(Collection<? extends UnparsedCode> c) { return concat(c.toArray(new UnparsedCode[c.size()])); }
-    public final CodeList concat(UnparsedCode... code)
+    public final UnparsedCodeList concat(UnparsedCodeList clist) { return concat(clist.code); }
+    public final UnparsedCodeList concat(Collection<? extends UnparsedCode> c) { return concat(c.toArray(new UnparsedCode[c.size()])); }
+    public final UnparsedCodeList concat(UnparsedCode... code)
     {
         UnparsedCode[] array = new UnparsedCode[this.code.length + code.length];
         System.arraycopy(this.code, 0, array, 0, this.code.length);
         System.arraycopy(check(code), 0, array, this.code.length, code.length);
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
-    public final CodeList concat(UnparsedCode code)
+    public final UnparsedCodeList concat(UnparsedCode code)
     {
         if(code == null)
             throw new NullPointerException();
         UnparsedCode[] array = new UnparsedCode[this.code.length + 1];
         System.arraycopy(this.code, 0, array, 0, this.code.length);
         array[array.length - 1] = code;
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
     
-    public final CodeList concatFirst(CodeList clist) { return concatFirst(clist.code); }
-    public final CodeList concatFirst(Collection<? extends UnparsedCode> c) { return concatFirst(c.toArray(new UnparsedCode[c.size()])); }
-    public final CodeList concatFirst(UnparsedCode... code)
+    public final UnparsedCodeList concatFirst(UnparsedCodeList clist) { return concatFirst(clist.code); }
+    public final UnparsedCodeList concatFirst(Collection<? extends UnparsedCode> c) { return concatFirst(c.toArray(new UnparsedCode[c.size()])); }
+    public final UnparsedCodeList concatFirst(UnparsedCode... code)
     {
         UnparsedCode[] array = new UnparsedCode[this.code.length + code.length];
         System.arraycopy(check(code), 0, array, 0, code.length);
         System.arraycopy(this.code, 0, array, code.length, this.code.length);
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
-    public final CodeList concatFirst(UnparsedCode code)
+    public final UnparsedCodeList concatFirst(UnparsedCode code)
     {
         if(code == null)
             throw new NullPointerException();
         UnparsedCode[] array = new UnparsedCode[this.code.length + 1];
         System.arraycopy(this.code, 0, array, 1, this.code.length);
         array[0] = code;
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
     
-    public final CodeList concatMiddle(int index, CodeList clist) { return concatMiddle(index, clist.code); }
-    public final CodeList concatMiddle(int index, Collection<? extends UnparsedCode> c) { return concatMiddle(index, c.toArray(new UnparsedCode[c.size()])); }
-    public final CodeList concatMiddle(int index, UnparsedCode... code)
+    public final UnparsedCodeList concatMiddle(int index, UnparsedCodeList clist) { return concatMiddle(index, clist.code); }
+    public final UnparsedCodeList concatMiddle(int index, Collection<? extends UnparsedCode> c) { return concatMiddle(index, c.toArray(new UnparsedCode[c.size()])); }
+    public final UnparsedCodeList concatMiddle(int index, UnparsedCode... code)
     {
         if(index < 0 || index > this.code.length)
             throw new IllegalArgumentException("Index out of range: " + index);
@@ -100,9 +100,9 @@ public final class CodeList
         System.arraycopy(this.code, 0, array, 0, index);
         System.arraycopy(check(code), 0, array, index, code.length);
         System.arraycopy(this.code, index, array, index + code.length, this.code.length - index);
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
-    public final CodeList concatMiddle(int index, UnparsedCode code)
+    public final UnparsedCodeList concatMiddle(int index, UnparsedCode code)
     {
         if(code == null)
             throw new NullPointerException();
@@ -116,11 +116,11 @@ public final class CodeList
         System.arraycopy(this.code, 0, array, 0, index);
         System.arraycopy(this.code, index, array, index + 1, this.code.length - index);
         array[index] = code;
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
     
-    public final CodeList wrapBetween(CodeList before, CodeList after) { return wrapBetween(before.code, after.code); }
-    public final CodeList wrapBetween(UnparsedCode before, UnparsedCode after)
+    public final UnparsedCodeList wrapBetween(UnparsedCodeList before, UnparsedCodeList after) { return wrapBetween(before.code, after.code); }
+    public final UnparsedCodeList wrapBetween(UnparsedCode before, UnparsedCode after)
     {
         if(before == null)
             throw new NullPointerException();
@@ -130,18 +130,18 @@ public final class CodeList
         System.arraycopy(code, 0, array, 1, code.length);
         array[0] = before;
         array[array.length - 1] = after;
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
-    public final CodeList wrapBetween(UnparsedCode[] before, UnparsedCode[] after)
+    public final UnparsedCodeList wrapBetween(UnparsedCode[] before, UnparsedCode[] after)
     {
         UnparsedCode[] array = new UnparsedCode[before.length + code.length + after.length];
         System.arraycopy(check(before), 0, array, 0, before.length);
         System.arraycopy(code, 0, array, before.length, code.length);
         System.arraycopy(check(after), 0, array, before.length + array.length, after.length);
-        return new CodeList(array, false);
+        return new UnparsedCodeList(array, false);
     }
     
-    public final CodeList extract(UnparsedCode from, UnparsedCode to)
+    public final UnparsedCodeList extract(UnparsedCode from, UnparsedCode to)
     {
         boolean init = false;
         int offset = -1, len = -1, idx = -1;
@@ -205,14 +205,14 @@ public final class CodeList
         return -1;
     }
     
-    public final CodeList[] split(UnparsedCode separator) { return split(separator, -1); }
-    public final CodeList[] split(UnparsedCode separator, int limit)
+    public final UnparsedCodeList[] split(UnparsedCode separator) { return split(separator, -1); }
+    public final UnparsedCodeList[] split(UnparsedCode separator, int limit)
     {
         if(code.length == 0)
-            return new CodeList[] { this };
+            return new UnparsedCodeList[] { this };
         if(limit == 1)
-            return new CodeList[] { copy() };
-        LinkedList<CodeList> parts = new LinkedList<>();
+            return new UnparsedCodeList[] { copy() };
+        LinkedList<UnparsedCodeList> parts = new LinkedList<>();
         limit = limit < 1 ? -1 : limit;
         int i, off;
         for(i=0, off=0;i<code.length;i++)
@@ -224,7 +224,7 @@ public final class CodeList
             }
         if(i > off)
             parts.add(subList(off, i - off));
-        return parts.toArray(new CodeList[parts.size()]);
+        return parts.toArray(new UnparsedCodeList[parts.size()]);
     }
     
     @Override
@@ -238,6 +238,13 @@ public final class CodeList
         return code;
     }
     
-    private static final CodeList EMPTY = new CodeList(new UnparsedCode[0], false);
-    public static final CodeList empty() { return EMPTY; }
+    private static final UnparsedCodeList EMPTY = new UnparsedCodeList(new UnparsedCode[0], false);
+    public static final UnparsedCodeList empty() { return EMPTY; }
+    
+    
+    public final ParsedCode parse(boolean allowDeclaration)
+    {
+        return null;
+    }
+    
 }
