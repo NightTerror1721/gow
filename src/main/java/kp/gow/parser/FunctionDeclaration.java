@@ -9,16 +9,9 @@ package kp.gow.parser;
  *
  * @author Asus
  */
-public enum CodeType
+public final class FunctionDeclaration
 {
-    IDENTIFIER,
-    SEPARATOR,
-    LITERAL,
-    OPERATOR_SYMBOL,
-    OPERATOR,
-    SCOPE,
-    PARENTHESIS,
-    ARGUMENT_LIST,
-    COMMAND_SYMBOL,
-    COMMAND;
+    //private final String name;
+    //private final boolean varargs;
+    
 }

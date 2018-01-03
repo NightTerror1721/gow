@@ -5,6 +5,7 @@
  */
 package kp.gow.parser;
 
+import kp.gow.exception.CompilationError;
 import kp.gow.parser.literals.*;
 
 /**
@@ -57,5 +58,48 @@ public abstract class Literal extends Operand implements ParsedCode
     public static final Literal literalOf(boolean value) { return value ? TRUE : FALSE; }
     public static final Literal literalOf(String value) { return value.isEmpty() ? EMPTY_STRING : new StringLiteral(value); }
     
+    public static final Literal parseNumber(String text)
+    {
+        if(text.isEmpty())
+            return null;
+        try
+        {
+            switch(text.charAt(text.length() - 1))
+            {
+                case 'd': case 'D':
+                    return literalOf(Double.parseDouble(text.substring(0, text.length() - 1)));
+                case 'f': case 'F':
+                    return literalOf(Float.parseFloat(text.substring(0, text.length() - 1)));
+                case 'l': case 'L':
+                    if(text.contains("."))
+                        literalOf(Double.parseDouble(text));
+                    if(text.startsWith("0x") || text.startsWith("0X"))
+                        return literalOf(Long.parseLong(text.substring(2, text.length() - 1), 16));
+                    if(text.charAt(0) == '0')
+                        return literalOf(Long.parseLong(text.substring(1, text.length() - 1), 8));
+                    return literalOf(Long.parseLong(text.substring(0, text.length() - 1)));
+                case 's': case 'S':
+                    return literalOf(Short.parseShort(text.substring(0, text.length() - 1)));
+                case 'b': case'B':
+                    return literalOf(Byte.parseByte(text.substring(0, text.length() - 1)));
+                default:
+                    if(text.contains("."))
+                        return text.charAt(0) == '.'
+                                ? literalOf(Double.parseDouble("0" + text))
+                                : literalOf(Double.parseDouble(text));
+                    if(text.startsWith("0x") || text.startsWith("0X"))
+                        return literalOf(Integer.parseInt(text.substring(2), 16));
+                    if(text.charAt(0) == '0')
+                        return literalOf(Integer.parseInt(text.substring(1), 8));
+                    return literalOf(Integer.parseInt(text));
+            }
+        }
+        catch(NumberFormatException ex) { return null; }
+    }
     
+    
+    public static final Literal arrayLiteral(UnparsedCodeList list) throws CompilationError { return new ArrayLiteral(list); }
+    public static final Literal listLiteral(UnparsedCodeList list) throws CompilationError { return new ListLiteral(list); }
+    public static final Literal setLiteral(UnparsedCodeList list) throws CompilationError { return new SetLiteral(list); }
+    public static final Literal mapLiteral(UnparsedCodeList list) throws CompilationError { return new MapLiteral(list); }
 }

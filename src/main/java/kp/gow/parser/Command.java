@@ -9,16 +9,12 @@ package kp.gow.parser;
  *
  * @author Asus
  */
-public enum CodeType
+public final class Command
 {
-    IDENTIFIER,
-    SEPARATOR,
-    LITERAL,
-    OPERATOR_SYMBOL,
-    OPERATOR,
-    SCOPE,
-    PARENTHESIS,
-    ARGUMENT_LIST,
-    COMMAND_SYMBOL,
-    COMMAND;
+
+    public static final Command parse(UnparsedCodeList list)
+    {
+        return null;
+    }
+    
 }

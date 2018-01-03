@@ -13,9 +13,9 @@ import kp.gow.parser.UnparsedCodeList;
  *
  * @author Asus
  */
-public final class ArrayLiteral extends Mutable
+public final class MapLiteral extends Mutable
 {
-    public ArrayLiteral(UnparsedCodeList list) throws CompilationError
+    public MapLiteral(UnparsedCodeList list) throws CompilationError
     {
         super(parse(list));
     }
@@ -23,10 +23,14 @@ public final class ArrayLiteral extends Mutable
     private static Item[] parse(UnparsedCodeList list) throws CompilationError
     {
         UnparsedCodeList[] parts = list.split(Separator.COMMA);
-        return UnparsedCodeList.mapArray(parts, t -> new Item(t), new Item[parts.length]);
+        return UnparsedCodeList.mapArray(parts, t -> {
+            UnparsedCodeList[] mapped = t.split(Separator.TWO_POINTS);
+            if(mapped.length != 2)
+                throw new CompilationError("Malformed map literal.");
+            return new Item(mapped[0], mapped[1]);
+        }, new Item[parts.length]);
     }
     
     @Override
-    public final LiteralType getLiteralType() { return LiteralType.ARRAY; }
-    
+    public final LiteralType getLiteralType() { return LiteralType.MAP; }
 }

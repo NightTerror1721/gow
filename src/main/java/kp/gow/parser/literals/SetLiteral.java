@@ -13,9 +13,9 @@ import kp.gow.parser.UnparsedCodeList;
  *
  * @author Asus
  */
-public final class ArrayLiteral extends Mutable
+public final class SetLiteral extends Mutable
 {
-    public ArrayLiteral(UnparsedCodeList list) throws CompilationError
+    public SetLiteral(UnparsedCodeList list) throws CompilationError
     {
         super(parse(list));
     }
@@ -27,6 +27,5 @@ public final class ArrayLiteral extends Mutable
     }
     
     @Override
-    public final LiteralType getLiteralType() { return LiteralType.ARRAY; }
-    
+    public final LiteralType getLiteralType() { return LiteralType.SET; }
 }

@@ -8,6 +8,7 @@ package kp.gow.parser;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import kp.gow.exception.CompilationError;
 
 /**
  *
@@ -16,18 +17,21 @@ import java.util.LinkedList;
 public final class UnparsedCodeList
 {
     private final UnparsedCode[] code;
+    private final int sourceLine;
     
-    public UnparsedCodeList(UnparsedCode... code) { this.code = check(code); }
-    public UnparsedCodeList(Collection<? extends UnparsedCode> c) { this(c.toArray(new UnparsedCode[c.size()])); }
-    public UnparsedCodeList(UnparsedCode[] code, int off, int len)
+    public UnparsedCodeList(int sourceLine, UnparsedCode... code) { this.code = check(code); this.sourceLine = sourceLine; }
+    public UnparsedCodeList(int sourceLine, Collection<? extends UnparsedCode> c) { this(sourceLine, c.toArray(new UnparsedCode[c.size()])); }
+    public UnparsedCodeList(int sourceLine, UnparsedCode[] code, int off, int len)
     {
         this.code = new UnparsedCode[len];
+        this.sourceLine = sourceLine;
         System.arraycopy(check(code), off, this.code, 0, len);
     }
-    private UnparsedCodeList(UnparsedCode[] code, boolean dummy) { this.code = code; }
-    private UnparsedCodeList(UnparsedCode[] code, int off, int len, boolean dummy)
+    private UnparsedCodeList(int sourceLine, UnparsedCode[] code, boolean dummy) { this.code = code; this.sourceLine = sourceLine; }
+    private UnparsedCodeList(int sourceLine, UnparsedCode[] code, int off, int len, boolean dummy)
     {
         this.code = new UnparsedCode[len];
+        this.sourceLine = sourceLine;
         System.arraycopy(code, off, this.code, 0, len);
     }
     
@@ -45,7 +49,7 @@ public final class UnparsedCodeList
     
     public final <UC extends UnparsedCode> UC get(int index) { return (UC) code[index]; }
     
-    public final UnparsedCodeList subList(int offset, int length) { return new UnparsedCodeList(code, offset, length, false); }
+    public final UnparsedCodeList subList(int offset, int length) { return new UnparsedCodeList(sourceLine, code, offset, length, false); }
     public final UnparsedCodeList subList(int offset) { return subList(offset, code.length - offset); }
     
     public final UnparsedCodeList concat(UnparsedCodeList clist) { return concat(clist.code); }
@@ -55,7 +59,7 @@ public final class UnparsedCodeList
         UnparsedCode[] array = new UnparsedCode[this.code.length + code.length];
         System.arraycopy(this.code, 0, array, 0, this.code.length);
         System.arraycopy(check(code), 0, array, this.code.length, code.length);
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     public final UnparsedCodeList concat(UnparsedCode code)
     {
@@ -64,7 +68,7 @@ public final class UnparsedCodeList
         UnparsedCode[] array = new UnparsedCode[this.code.length + 1];
         System.arraycopy(this.code, 0, array, 0, this.code.length);
         array[array.length - 1] = code;
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     
     public final UnparsedCodeList concatFirst(UnparsedCodeList clist) { return concatFirst(clist.code); }
@@ -74,7 +78,7 @@ public final class UnparsedCodeList
         UnparsedCode[] array = new UnparsedCode[this.code.length + code.length];
         System.arraycopy(check(code), 0, array, 0, code.length);
         System.arraycopy(this.code, 0, array, code.length, this.code.length);
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     public final UnparsedCodeList concatFirst(UnparsedCode code)
     {
@@ -83,7 +87,7 @@ public final class UnparsedCodeList
         UnparsedCode[] array = new UnparsedCode[this.code.length + 1];
         System.arraycopy(this.code, 0, array, 1, this.code.length);
         array[0] = code;
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     
     public final UnparsedCodeList concatMiddle(int index, UnparsedCodeList clist) { return concatMiddle(index, clist.code); }
@@ -100,7 +104,7 @@ public final class UnparsedCodeList
         System.arraycopy(this.code, 0, array, 0, index);
         System.arraycopy(check(code), 0, array, index, code.length);
         System.arraycopy(this.code, index, array, index + code.length, this.code.length - index);
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     public final UnparsedCodeList concatMiddle(int index, UnparsedCode code)
     {
@@ -116,7 +120,7 @@ public final class UnparsedCodeList
         System.arraycopy(this.code, 0, array, 0, index);
         System.arraycopy(this.code, index, array, index + 1, this.code.length - index);
         array[index] = code;
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     
     public final UnparsedCodeList wrapBetween(UnparsedCodeList before, UnparsedCodeList after) { return wrapBetween(before.code, after.code); }
@@ -130,7 +134,7 @@ public final class UnparsedCodeList
         System.arraycopy(code, 0, array, 1, code.length);
         array[0] = before;
         array[array.length - 1] = after;
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     public final UnparsedCodeList wrapBetween(UnparsedCode[] before, UnparsedCode[] after)
     {
@@ -138,7 +142,7 @@ public final class UnparsedCodeList
         System.arraycopy(check(before), 0, array, 0, before.length);
         System.arraycopy(code, 0, array, before.length, code.length);
         System.arraycopy(check(after), 0, array, before.length + array.length, after.length);
-        return new UnparsedCodeList(array, false);
+        return new UnparsedCodeList(sourceLine, array, false);
     }
     
     public final UnparsedCodeList extract(UnparsedCode from, UnparsedCode to)
@@ -238,13 +242,31 @@ public final class UnparsedCodeList
         return code;
     }
     
-    private static final UnparsedCodeList EMPTY = new UnparsedCodeList(new UnparsedCode[0], false);
-    public static final UnparsedCodeList empty() { return EMPTY; }
+    private static final UnparsedCode[] EMPTY_ARRAY = {};
+    public static final UnparsedCodeList empty(int sourceLine) { return new UnparsedCodeList(sourceLine, EMPTY_ARRAY); }
+    
+    public static final <IT, OT> OT[] mapArray(IT[] input, Mapper<IT, OT> mapper, OT[] output) throws CompilationError
+    {
+        int end = input.length > output.length ? output.length : input.length;
+        for(int i=0;i<end;i++)
+            output[i] = mapper.map(input[i]);
+        return output;
+    }
+    
+    public static final <IT, OT> OT[] mapArray(int offset, IT[] input, Mapper<IT, OT> mapper, OT[] output) throws CompilationError
+    {
+        int end = input.length > output.length ? output.length : input.length;
+        for(int i=offset;i<end;i++)
+            output[i] = mapper.map(input[i]);
+        return output;
+    }
     
     
-    public final ParsedCode parse(boolean allowDeclaration)
+    public final ParsedCode parse()
     {
         return null;
     }
     
+    @FunctionalInterface
+    public interface Mapper<I, O> { O map(I input) throws CompilationError; }
 }

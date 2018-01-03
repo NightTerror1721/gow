@@ -7,6 +7,7 @@ package kp.gow.parser;
 
 import java.util.Iterator;
 import java.util.StringJoiner;
+import kp.gow.exception.CompilationError;
 
 /**
  *
@@ -33,7 +34,7 @@ public class ArgumentList implements UnparsedCode, ParsedCode, Iterable<ParsedCo
         {
             code = new ParsedCode[lists.length];
             for(int i=0;i<lists.length;i++)
-                code[i] = lists[i].parse(false);
+                code[i] = lists[i].parse();
         }
     }
     
@@ -80,5 +81,29 @@ public class ArgumentList implements UnparsedCode, ParsedCode, Iterable<ParsedCo
         for(ParsedCode code1 : code)
             joiner.add(code1.toString());
         return "(" + joiner + ")";
+    }
+    
+    
+    public static final ArgumentList toFor(UnparsedCodeList list) throws CompilationError
+    {
+        int colons = list.count(Separator.COLON);
+        switch(colons)
+        {
+            case 2: {
+                UnparsedCodeList[] parts = list.split(Separator.COLON);
+                if(parts.length != 3)
+                    throw new CompilationError("Malformed \"for\" structure: for(code;code;code) or for(<type> code : code)");
+                Command initPart;
+                if(!parts[0].isEmpty())
+                {
+                    initPart = Command.parse(parts[0]);
+                }
+                else initPart = null;
+            } break;
+            case 0: {
+                
+            } break;
+            default: throw new CompilationError("Malformed \"for\" structure: for(code;code;code) or for(<type> code : code)");
+        }
     }
 }

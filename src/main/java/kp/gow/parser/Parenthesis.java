@@ -19,7 +19,7 @@ public class Parenthesis extends Operand implements ParsedCode
             throw new NullPointerException();
         this.code = code;
     }
-    public Parenthesis(UnparsedCodeList list) { this(list.parse(false)); }
+    public Parenthesis(UnparsedCodeList list) { this(list.parse()); }
     
     public final ParsedCode getCode() { return code; }
 
